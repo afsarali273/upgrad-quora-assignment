@@ -24,8 +24,8 @@ import java.time.ZonedDateTime;
 @Table(name = "USER_AUTH", schema = "public")
 @NamedQueries({
         @NamedQuery(name = "userAuthTokenByAccessToken", query = "select ut from UserAuthTokenEntity ut where ut.accessToken =:accessToken"),
-        @NamedQuery(name = "userAuthTokenByUserId", query = "select ut from UserAuthTokenEntity ut where ut.id =:userId"),
-        @NamedQuery(name = "deleteUserAuthTokenByUserId", query = "delete  from UserAuthTokenEntity ut where ut.id =:userId")
+        @NamedQuery(name = "userAuthTokenByUserName", query = "select ut from UserAuthTokenEntity ut where ut.user.userName =:userName"),
+        @NamedQuery(name = "deleteUserAuthTokenByUserId", query = "delete  from UserAuthTokenEntity ut where ut.user.id =:userId")
 })
 public class UserAuthTokenEntity implements Serializable {
 
@@ -44,8 +44,8 @@ public class UserAuthTokenEntity implements Serializable {
     private UserEntity user;
 
     @Column(name = "ACCESS_TOKEN")
-    @NotNull
     @Size(max = 500)
+    @NotNull
     private String accessToken;
 
     @Column(name = "LOGIN_AT")

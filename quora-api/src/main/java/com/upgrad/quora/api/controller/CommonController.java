@@ -27,7 +27,7 @@ public class CommonController {
     @RequestMapping(method = RequestMethod.GET, path = "/userprofile/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UserDetailsResponse> login(@PathVariable("userId") String userId,@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, UserNotFoundException {
 
-        UserAuthTokenEntity userAuthToken = authenticationService.authenticate(Long.parseLong(userId),authorization);
+        UserAuthTokenEntity userAuthToken = authenticationService.userProfile(Long.parseLong(userId),authorization);
         UserEntity user = userAuthToken.getUser();
 
         UserDetailsResponse userDetailsResponse = new UserDetailsResponse();
