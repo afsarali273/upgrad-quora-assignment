@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.Base64;
 
 @Service
 public class AuthenticationService {
@@ -35,6 +36,7 @@ public class AuthenticationService {
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
             UserAuthTokenEntity userAuthTokenEntity = new UserAuthTokenEntity();
             userAuthTokenEntity.setUser(userEntity);
+            userAuthTokenEntity.setUuId(userEntity.getUuid());
             final ZonedDateTime now = ZonedDateTime.now();
             final ZonedDateTime expiresAt = now.plusHours(8);
 
@@ -53,14 +55,20 @@ public class AuthenticationService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity authenticate(final String accessToken) throws SignOutRestrictedException {
-        UserAuthTokenEntity userEntity = userDao.getUserAuthTokenEntity(accessToken);
-        if (userEntity == null)
+    public UserAuthTokenEntity authenticate(final String authorization) throws SignOutRestrictedException, AuthenticationFailedException {
+        byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
+        String decodedText = new String(decode);
+        String[] decodedArray = decodedText.split(":");
+
+        UserAuthTokenEntity userAuthToken = authenticate(decodedArray[0], decodedArray[1]);
+
+        UserAuthTokenEntity userAuthEntity = userDao.getUserAuthTokenEntity(userAuthToken.getAccessToken());
+        if (userAuthEntity == null)
             throw new SignOutRestrictedException("SGR-001", "User is not Signed in");
 
             final ZonedDateTime now = ZonedDateTime.now();
-            userEntity.setLogoutAt(now);
-            return userEntity;
+            userAuthEntity.setLogoutAt(now);
+            return userAuthEntity;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
