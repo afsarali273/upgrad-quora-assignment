@@ -108,6 +108,14 @@ public class UserAuthTokenEntity implements Serializable {
         this.logoutAt = logoutAt;
     }
 
+    public String getUuId() {
+        return uuId;
+    }
+
+    public void setUuId(String uuId) {
+        this.uuId = uuId;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return new EqualsBuilder().append(this, obj).isEquals();
