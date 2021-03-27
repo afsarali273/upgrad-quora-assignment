@@ -1,3 +1,4 @@
 .idea
 Trello_quora.iml
 target/
+docker/data/
