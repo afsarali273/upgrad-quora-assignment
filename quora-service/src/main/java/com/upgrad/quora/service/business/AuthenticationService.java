@@ -21,11 +21,12 @@ public class AuthenticationService {
     @Autowired
     private UserDao userDao;
 
+
     @Autowired
     private PasswordCryptographyProvider CryptographyProvider;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity authenticate(final String username, final String password) throws AuthenticationFailedException {
+    public UserAuthTokenEntity signIn(final String username, final String password) throws AuthenticationFailedException {
         UserEntity userEntity = userDao.getUserByUserName(username);
         if (userEntity == null) {
             throw new AuthenticationFailedException("ATH-001", "This username does not exist");
@@ -55,24 +56,19 @@ public class AuthenticationService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity authenticate(final String authorization) throws SignOutRestrictedException, AuthenticationFailedException {
-        byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
-        String decodedText = new String(decode);
-        String[] decodedArray = decodedText.split(":");
+    public UserAuthTokenEntity signOut(final String accessToken) throws SignOutRestrictedException {
 
-        UserAuthTokenEntity userAuthToken = authenticate(decodedArray[0], decodedArray[1]);
-
-        UserAuthTokenEntity userAuthEntity = userDao.getUserAuthTokenEntity(userAuthToken.getAccessToken());
+        UserAuthTokenEntity userAuthEntity= userDao.getUserAuthTokenEntity(accessToken);
         if (userAuthEntity == null)
             throw new SignOutRestrictedException("SGR-001", "User is not Signed in");
 
-            final ZonedDateTime now = ZonedDateTime.now();
-            userAuthEntity.setLogoutAt(now);
-            return userAuthEntity;
+        final ZonedDateTime now = ZonedDateTime.now();
+        userAuthEntity.setLogoutAt(now);
+        return userAuthEntity;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity authenticate(long UserId,final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
+    public UserAuthTokenEntity userProfile(long UserId, final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
         UserAuthTokenEntity userEntity = userDao.getUserAuthTokenEntity(accessToken);
 
         //Check user is signed in
@@ -80,14 +76,25 @@ public class AuthenticationService {
             throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
 
         // Check User is Signed Out
-        if(userEntity.getLogoutAt() != null)
-            throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to get user details");
+        if (userEntity.getLogoutAt() != null)
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get user details");
 
-       //Check userId is correct/exist in DB
-        if(userDao.getUserAuthTokenEntityByUserId(UserId) == null)
-            throw new UserNotFoundException("USR-001","User with entered uuid does not exist");
+        //Check userId is correct/exist in DB
+        if (userDao.getUserByUserId(UserId) == null)
+            throw new UserNotFoundException("USR-001", "User with entered uuid does not exist");
 
         return userEntity;
+    }
+
+    public UserAuthTokenEntity getUserAuthTokenEntity(String authorization) {
+        try {
+            byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
+            String decodedText = new String(decode);
+            String[] decodedArray = decodedText.split(":");
+            return userDao.getUserAuthTokenEntityByUserName(decodedArray[0]);
+        } catch (Exception exc) {
+            return null;
+        }
     }
 }
 

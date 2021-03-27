@@ -53,27 +53,35 @@ public class QuestionController {
         return new ResponseEntity<QuestionResponse>(questionResponse, HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/question/all", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.GET, path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
         final List<QuestionEntity> allQuestions = questionService.getAllQuestions(authorization);
 
         List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<>();
-        allQuestions.stream().map(question ->
-                questionDetailsResponseList.add(
-                        new QuestionDetailsResponse()
-                                .content(question.getContent())
-                                .id(question.getUuid())));
+        allQuestions.stream().forEach(question -> {
+                    QuestionDetailsResponse questionDetailsResponse = new QuestionDetailsResponse()
+                            .content(question.getContent())
+                            .id(question.getUuid());
+                    questionDetailsResponseList.add(questionDetailsResponse);
+                }
+        );
         return new ResponseEntity<List<QuestionDetailsResponse>>(questionDetailsResponseList, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/question/edit/{questionId}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionEditResponse> editQuestion(@PathVariable("questionId") String questionId, final QuestionEditRequest questionEditRequest, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
+        final UserAuthTokenEntity userAuthTokenEntity = questionService.authenticate(authorization, questionId);
 
         QuestionEntity questionEntity = new QuestionEntity();
         questionEntity.setContent(questionEditRequest.getContent());
-        final QuestionEntity updatedQuestion = questionService.updateQuestion(authorization, questionId, questionEntity);
+        questionEntity.setDate(Timestamp.valueOf(LocalDateTime.now()));
+        questionEntity.setUuid(UUID.randomUUID().toString());
+        questionEntity.setUser(userAuthTokenEntity.getUser());
+
+        questionService.updateQuestion(questionEntity);
+
         QuestionEditResponse questionEditResponse = new QuestionEditResponse();
-        questionEditResponse.id(updatedQuestion.getUuid());
+        questionEditResponse.id(questionEntity.getUuid());
         questionEditResponse.status("QUESTION EDITED");
 
         return new ResponseEntity<QuestionEditResponse>(questionEditResponse, HttpStatus.OK);
@@ -90,9 +98,15 @@ public class QuestionController {
     @RequestMapping(method = RequestMethod.GET, path = "question/all/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionDetailsResponse>> getQuestionsByUser(@PathVariable("userId") final String userId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
 
-        List<QuestionEntity> questionEntities =  questionService.getAllQuestionByUser(authorization,userId);
+        List<QuestionEntity> questionEntities = questionService.getAllQuestionByUser(authorization, userId);
         List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<>();
-        questionEntities.stream().map( question -> questionDetailsResponseList.add(new QuestionDetailsResponse().id(question.getUuid()).content(question.getContent())));
+
+        questionEntities.stream().forEach(question -> {
+            QuestionDetailsResponse questionDetailsResponse = new QuestionDetailsResponse()
+                    .id(question.getUuid())
+                    .content(question.getContent());
+            questionDetailsResponseList.add(questionDetailsResponse);
+        });
 
         return new ResponseEntity<List<QuestionDetailsResponse>>(questionDetailsResponseList, HttpStatus.OK);
     }

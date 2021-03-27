@@ -32,6 +32,7 @@ public class QuestionEntity implements Serializable {
 
     @Column(name = "UUID")
     @Size(max = 200)
+    @NotNull
     private String uuid;
 
     @Column(name = "CONTENT")

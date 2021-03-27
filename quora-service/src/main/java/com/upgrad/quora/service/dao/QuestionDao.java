@@ -24,7 +24,7 @@ public class QuestionDao {
     }
 
     public List<QuestionEntity> getAllQuestionsByUserId(String userId) {
-        return  entityManager.createNamedQuery("allQuestionsByUserId", QuestionEntity.class).setParameter("userId",userId).getResultList();
+        return  entityManager.createNamedQuery("allQuestionsByUserId", QuestionEntity.class).setParameter("userId",Long.parseLong(userId)).getResultList();
     }
 
     public QuestionEntity updateQuestion(QuestionEntity questionEntity) {
@@ -33,12 +33,12 @@ public class QuestionDao {
 
     // Finding question based on its Id
     public QuestionEntity findQuestionById(String questionId) {
-        return  entityManager.createNamedQuery("findByQuestionId", QuestionEntity.class).setParameter("questionId",questionId).getSingleResult();
+        return  entityManager.createNamedQuery("findByQuestionId", QuestionEntity.class).setParameter("questionId",Long.parseLong(questionId)).getSingleResult();
     }
 
     public QuestionEntity deleteQuestion(String questionId) {
         QuestionEntity questionEntity =  findQuestionById(questionId);
-        entityManager.createNamedQuery("deleteByQuestionId",QuestionEntity.class).setParameter("questionId",questionId);
+        entityManager.remove(questionEntity);
         return questionEntity;
     }
 

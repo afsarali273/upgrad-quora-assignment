@@ -45,7 +45,7 @@ public class QuestionService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity updateQuestion(String authToken, String questionId , QuestionEntity questionEntity) throws AuthorizationFailedException, InvalidQuestionException {
+    public UserAuthTokenEntity authenticate(String authToken, String questionId) throws AuthorizationFailedException, InvalidQuestionException {
 
         UserAuthTokenEntity userEntity = userDao.getUserAuthTokenEntity(authToken);
         //Check user is signed in
@@ -67,6 +67,11 @@ public class QuestionService {
         if(questionDao.findQuestionById(questionId) ==null)
             throw new InvalidQuestionException("QUES-001","Entered question uuid does not exist");
 
+        return userEntity;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public QuestionEntity updateQuestion(QuestionEntity questionEntity){
        return questionDao.updateQuestion(questionEntity);
     }
 
@@ -92,7 +97,7 @@ public class QuestionService {
         if(questionDao.findQuestionById(questionId) ==null)
             throw new InvalidQuestionException("QUES-001","Entered question uuid does not exist");
 
-        return questionDao.deleteQuestion(questionId);
+         return questionDao.deleteQuestion(questionId);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

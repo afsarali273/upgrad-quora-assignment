@@ -56,12 +56,12 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/user/signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<SigninResponse> login(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
+    public ResponseEntity<SigninResponse> signIn(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
         byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
         String decodedText = new String(decode);
         String[] decodedArray = decodedText.split(":");
 
-        UserAuthTokenEntity userAuthToken = authenticationService.authenticate(decodedArray[0], decodedArray[1]);
+        UserAuthTokenEntity userAuthToken = authenticationService.signIn(decodedArray[0], decodedArray[1]);
 
         UserEntity user = userAuthToken.getUser();
 
@@ -73,8 +73,8 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/user/signout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<SignoutResponse> signout(@RequestHeader("authorization") final String authorization) throws SignOutRestrictedException, AuthenticationFailedException {
-        UserAuthTokenEntity userAuthToken = authenticationService.authenticate(authorization);
+    public ResponseEntity<SignoutResponse> signOut(@RequestHeader("accessToken") final String accessToken) throws SignOutRestrictedException {
+        UserAuthTokenEntity userAuthToken = authenticationService.signOut(accessToken);
 
         UserEntity user = userAuthToken.getUser();
 

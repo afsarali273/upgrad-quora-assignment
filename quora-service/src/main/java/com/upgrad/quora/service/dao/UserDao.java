@@ -36,6 +36,14 @@ public class UserDao {
         }
     }
 
+    public UserEntity getUserByUserId(final long userId) {
+        try {
+            return entityManager.createNamedQuery("userByUserId", UserEntity.class).setParameter("userId", userId).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
     public UserEntity getUserByUuid(final String Uuid) {
         try {
             return entityManager.createNamedQuery("userByUuid", UserEntity.class).setParameter("uuid", Uuid).getSingleResult();
@@ -59,9 +67,9 @@ public class UserDao {
     }
 
     // Retrieve User by using UserId
-    public UserAuthTokenEntity getUserAuthTokenEntityByUserId(long userId) {
+    public UserAuthTokenEntity getUserAuthTokenEntityByUserName(String userName) {
         try {
-            return entityManager.createNamedQuery("userAuthTokenByUserId", UserAuthTokenEntity.class).setParameter("userId", userId).getSingleResult();
+            return entityManager.createNamedQuery("userAuthTokenByUserName", UserAuthTokenEntity.class).setParameter("userName", userName).getSingleResult();
         }catch (NoResultException nre){
             return null;
         }
@@ -71,9 +79,9 @@ public class UserDao {
         entityManager.merge(updatedUserEntity);
     }
 
+    // Delete User
     public void deleteUser(final UserEntity deleteUser) {
-        entityManager.createNamedQuery("deleteUserAuthTokenByUserId", UserAuthTokenEntity.class).setParameter("userId",deleteUser.getId()).getSingleResult();
-        entityManager.createNamedQuery("deleteByUserName", UserEntity.class).setParameter("username",deleteUser.getUserName() ).getSingleResult();
+       entityManager.remove(deleteUser);
     }
 
 
