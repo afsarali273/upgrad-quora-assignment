@@ -21,7 +21,8 @@ import java.io.Serializable;
 @Table(name = "USERS", schema = "public")
 @NamedQueries({
         @NamedQuery(name = "userByEmail", query = "select u from UserEntity u where u.email = :email"),
-        @NamedQuery(name = "userByUserName", query = "select u from UserEntity u where u.userName = :username")
+        @NamedQuery(name = "userByUserName", query = "select u from UserEntity u where u.userName = :username"),
+        @NamedQuery(name = "deleteByUserName", query = "delete from UserEntity u where u.userName = :username")
 })
 public class UserEntity implements Serializable {
 
@@ -190,6 +191,14 @@ public class UserEntity implements Serializable {
 
     public String getContactNumber() {
         return contactNumber;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
     }
 
     public void setContactNumber(String contactNumber) {
