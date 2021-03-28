@@ -30,6 +30,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.25.0-GA</version>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>2.9.6</version>
@@ -55,5 +60,33 @@
         <module>quora-service</module>
         <module>quora-api</module>
     </modules>
+
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>com.cosium.code</groupId>-->
+<!--                <artifactId>git-code-format-maven-plugin</artifactId>-->
+<!--                <version>2.6</version>-->
+<!--                <executions>-->
+<!--                    &lt;!&ndash; On commit, format the modified java files &ndash;&gt;-->
+<!--                    <execution>-->
+<!--                        <id>install-formatter-hook</id>-->
+<!--                        <goals>-->
+<!--                            <goal>install-hooks</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                    &lt;!&ndash; On Maven verify phase, fail if any file-->
+<!--                    (including unmodified) is badly formatted &ndash;&gt;-->
+<!--                    <execution>-->
+<!--                        <id>validate-code-format</id>-->
+<!--                        <goals>-->
+<!--                            <goal>validate-code-format</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+
+<!--    </build>-->
 
 </project>
