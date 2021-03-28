@@ -21,7 +21,7 @@ public class AdminService {
 
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity authenticate(long UserId, final String authorization) throws AuthorizationFailedException, UserNotFoundException, AuthenticationFailedException, SignOutRestrictedException {
+    public UserAuthTokenEntity authenticate(String uuId, final String authorization) throws AuthorizationFailedException, UserNotFoundException, AuthenticationFailedException, SignOutRestrictedException {
 
         UserAuthTokenEntity userAuthToken =  userDao.getUserAuthTokenEntity(authorization);
 
@@ -38,7 +38,7 @@ public class AdminService {
             throw new AuthorizationFailedException("ATHR-003","Unauthorized Access, Entered user is not an admin");
 
         //Check userId is correct/exist in DB
-        UserEntity userEntity = userDao.getUserByUserId(UserId);
+        UserEntity userEntity = userDao.getUserByUuid(uuId);
         if(userEntity == null)
             throw new UserNotFoundException("USR-001","User with entered uuid to be deleted does not exist");
 

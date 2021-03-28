@@ -19,9 +19,8 @@ import java.sql.Timestamp;
 @Table(name = "QUESTION", schema = "public")
 @NamedQueries({
         @NamedQuery(name = "allQuestions", query = "select q from QuestionEntity q"),
-        @NamedQuery(name = "findByQuestionId",query = "select q from QuestionEntity q where q.id = :questionId"),
-        @NamedQuery(name = "deleteByQuestionId",query = "delete from QuestionEntity q where q.id = :questionId"),
-        @NamedQuery(name = "allQuestionsByUserId",query = "select u from QuestionEntity u where u.user.id= :userId")
+        @NamedQuery(name = "findByQuestionUuId",query = "select q from QuestionEntity q where q.uuid = :questionUuid"),
+        @NamedQuery(name = "allQuestionsByUserId",query = "select u from QuestionEntity u where u.user.uuid= :userId")
 })
 public class QuestionEntity implements Serializable {
 

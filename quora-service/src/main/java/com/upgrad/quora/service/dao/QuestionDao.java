@@ -4,6 +4,7 @@ import com.upgrad.quora.service.entity.QuestionEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class QuestionDao {
     }
 
     public List<QuestionEntity> getAllQuestionsByUserId(String userId) {
-        return  entityManager.createNamedQuery("allQuestionsByUserId", QuestionEntity.class).setParameter("userId",Long.parseLong(userId)).getResultList();
+        return  entityManager.createNamedQuery("allQuestionsByUserId", QuestionEntity.class).setParameter("userId",userId).getResultList();
     }
 
     public QuestionEntity updateQuestion(QuestionEntity questionEntity) {
@@ -32,12 +33,16 @@ public class QuestionDao {
     }
 
     // Finding question based on its Id
-    public QuestionEntity findQuestionById(String questionId) {
-        return  entityManager.createNamedQuery("findByQuestionId", QuestionEntity.class).setParameter("questionId",Long.parseLong(questionId)).getSingleResult();
-    }
+    public QuestionEntity findQuestionByUuid(String questionUuid) {
+        try {
+            return entityManager.createNamedQuery("findByQuestionUuId", QuestionEntity.class).setParameter("questionUuid", questionUuid).getSingleResult();
+        }catch (NoResultException nre){
+            return null;
+        }
+        }
 
-    public QuestionEntity deleteQuestion(String questionId) {
-        QuestionEntity questionEntity =  findQuestionById(questionId);
+    public QuestionEntity deleteQuestion(String questionUuid) {
+        QuestionEntity questionEntity =  findQuestionByUuid(questionUuid);
         entityManager.remove(questionEntity);
         return questionEntity;
     }
