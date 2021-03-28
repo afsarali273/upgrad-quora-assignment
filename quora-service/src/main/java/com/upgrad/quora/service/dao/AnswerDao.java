@@ -20,8 +20,8 @@ public class AnswerDao {
   public AnswerEntity getAnswerById(final String answerId) {
     try {
       return entityManager
-              .createNamedQuery("getAnswerById", AnswerEntity.class)
-              .setParameter("uuid", answerId)
+              .createNamedQuery("answerByUuid", AnswerEntity.class)
+              .setParameter("uuId", answerId)
               .getSingleResult();
     } catch (Exception nre) {
       return null;
@@ -44,7 +44,7 @@ public class AnswerDao {
   public List<AnswerEntity> getAllAnswersToQuestion(final String questionId) {
     return entityManager
             .createNamedQuery("getAllAnswersToQuestion", AnswerEntity.class)
-            .setParameter("uuid", questionId)
+            .setParameter("questionUuid", questionId)
             .getResultList();
   }
 }

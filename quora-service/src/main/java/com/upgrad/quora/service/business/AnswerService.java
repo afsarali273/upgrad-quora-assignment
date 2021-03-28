@@ -84,7 +84,9 @@ public class AnswerService {
     UserAuthTokenEntity userAuthEntity = userAuthDao.getUserAuthTokenEntity(accessToken);
     if (userAuthEntity == null) {
       throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-    } else if (userAuthEntity.getLogoutAt() != null) {
+    }
+
+    if (userAuthEntity.getLogoutAt() != null) {
       throw new AuthorizationFailedException(
           "ATHR-002", "User is signed out.Sign in first to delete an answer");
     }
