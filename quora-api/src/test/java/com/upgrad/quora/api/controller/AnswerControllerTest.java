@@ -98,7 +98,7 @@ public class AnswerControllerTest {
   // This test case passes when you try to edit the answer and the JWT token entered exists in the
   // database and the user corresponding to that JWT token is signed in but the corresponding user
   // is not the owner of the answer.
- 
+  @Test
   public void editAnswerWithoutOwnership() throws Exception {
     mvc.perform(
             MockMvcRequestBuilders.put("/answer/edit/database_answer_uuid?content=edited_answer")
@@ -131,7 +131,7 @@ public class AnswerControllerTest {
   }
 
   // This test case passes when you try to delete the answer which does not exist in the database.
-
+  @Test
   public void deleteNonExistingAnswer() throws Exception {
     mvc.perform(
             MockMvcRequestBuilders.delete("/answer/delete/non_existing_answer_uuid")
@@ -143,7 +143,7 @@ public class AnswerControllerTest {
   // This test case passes when you try to delete the answer and the JWT token entered exists in the
   // database and the user corresponding to that JWT token is signed in but the corresponding user
   // is not the owner of the answer or he is not the admin.
-
+  @Test
   public void deleteAnswerWithoutOwnership() throws Exception {
     mvc.perform(
             MockMvcRequestBuilders.delete("/answer/delete/database_answer_uuid")
