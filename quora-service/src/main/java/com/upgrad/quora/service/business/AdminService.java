@@ -14,41 +14,42 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AdminService {
-    @Autowired
-    UserDao userDao;
+  @Autowired UserDao userDao;
 
-    @Autowired AuthenticationService authenticationService;
+  @Autowired AuthenticationService authenticationService;
 
+  @Transactional(propagation = Propagation.REQUIRED)
+  public UserAuthTokenEntity authenticate(String uuId, final String authorization)
+      throws AuthorizationFailedException, UserNotFoundException, AuthenticationFailedException,
+          SignOutRestrictedException {
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity authenticate(String uuId, final String authorization) throws AuthorizationFailedException, UserNotFoundException, AuthenticationFailedException, SignOutRestrictedException {
+    UserAuthTokenEntity userAuthToken = userDao.getUserAuthTokenEntity(authorization);
 
-        UserAuthTokenEntity userAuthToken =  userDao.getUserAuthTokenEntity(authorization);
+    // Check user is signed in
+    if (userAuthToken == null)
+      throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
 
-        //Check user is signed in
-        if (userAuthToken == null)
-            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+    // Check User is Signed Out
+    if (userAuthToken.getLogoutAt() != null)
+      throw new AuthorizationFailedException("ATHR-002", "User is signed out'");
 
-        // Check User is Signed Out
-        if(userAuthToken.getLogoutAt() != null)
-            throw new AuthorizationFailedException("ATHR-002","User is signed out'");
+    // Check User is Admin
+    if (userAuthToken.getUser().getRole().contains("nonadmin"))
+      throw new AuthorizationFailedException(
+          "ATHR-003", "Unauthorized Access, Entered user is not an admin");
 
-        // Check User is Admin
-        if(userAuthToken.getUser().getRole().contains("nonadmin"))
-            throw new AuthorizationFailedException("ATHR-003","Unauthorized Access, Entered user is not an admin");
+    // Check userId is correct/exist in DB
+    UserEntity userEntity = userDao.getUserByUuid(uuId);
+    if (userEntity == null)
+      throw new UserNotFoundException(
+          "USR-001", "User with entered uuid to be deleted does not exist");
 
-        //Check userId is correct/exist in DB
-        UserEntity userEntity = userDao.getUserByUuid(uuId);
-        if(userEntity == null)
-            throw new UserNotFoundException("USR-001","User with entered uuid to be deleted does not exist");
+    return userAuthToken;
+  }
 
-      return userAuthToken;
-    }
-
-    //Delete User
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void deleteUser(UserEntity userEntity){
-        userDao.deleteUser(userEntity);
-    }
-
+  // Delete User
+  @Transactional(propagation = Propagation.REQUIRED)
+  public void deleteUser(UserEntity userEntity) {
+    userDao.deleteUser(userEntity);
+  }
 }
