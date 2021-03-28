@@ -21,27 +21,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class CommonController {
 
-    @Autowired
-    AuthenticationService authenticationService;
+  @Autowired AuthenticationService authenticationService;
 
-    @RequestMapping(method = RequestMethod.GET, path = "/userprofile/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<UserDetailsResponse> login(@PathVariable("userId") String userId,@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, UserNotFoundException {
+  @RequestMapping(
+      method = RequestMethod.GET,
+      path = "/userprofile/{userId}",
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<UserDetailsResponse> login(
+      @PathVariable("userId") String userId,
+      @RequestHeader("authorization") final String authorization)
+      throws AuthorizationFailedException, UserNotFoundException {
 
-        UserAuthTokenEntity userAuthToken = authenticationService.userProfile(userId,authorization);
-        UserEntity user = userAuthToken.getUser();
+    UserAuthTokenEntity userAuthToken = authenticationService.userProfile(userId, authorization);
+    UserEntity user = userAuthToken.getUser();
 
-        UserDetailsResponse userDetailsResponse = new UserDetailsResponse();
-        userDetailsResponse.userName(user.getUserName());
-        userDetailsResponse.firstName(user.getFirstName());
-        userDetailsResponse.lastName(user.getLastName());
-        userDetailsResponse.dob(user.getDob());
-        userDetailsResponse.aboutMe(user.getAboutMe());
-        userDetailsResponse.country(user.getCountry());
-        userDetailsResponse.contactNumber(user.getContactNumber());
-        userDetailsResponse.emailAddress(user.getEmail());
+    UserDetailsResponse userDetailsResponse = new UserDetailsResponse();
+    userDetailsResponse.userName(user.getUserName());
+    userDetailsResponse.firstName(user.getFirstName());
+    userDetailsResponse.lastName(user.getLastName());
+    userDetailsResponse.dob(user.getDob());
+    userDetailsResponse.aboutMe(user.getAboutMe());
+    userDetailsResponse.country(user.getCountry());
+    userDetailsResponse.contactNumber(user.getContactNumber());
+    userDetailsResponse.emailAddress(user.getEmail());
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("access-token", userAuthToken.getAccessToken());
-        return new ResponseEntity<UserDetailsResponse>(userDetailsResponse, headers, HttpStatus.OK);
-    }
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("access-token", userAuthToken.getAccessToken());
+    return new ResponseEntity<UserDetailsResponse>(userDetailsResponse, headers, HttpStatus.OK);
+  }
 }
