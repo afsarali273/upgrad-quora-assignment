@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.ZonedDateTime;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,7 +43,9 @@ public class AnswerService {
       throw new InvalidQuestionException("QUES-001", "The question entered is invalid");
     }
     answerEntity.setUuid(UUID.randomUUID().toString());
-    answerEntity.setDate(ZonedDateTime.now());
+    Date date = new Date();
+    Timestamp timestamp = new Timestamp(date.getTime());
+    answerEntity.setDate(timestamp);
     answerEntity.setQuestion(questionEntity);
     answerEntity.setUser(userAuthEntity.getUser());
     return answerDao.createAnswer(answerEntity);

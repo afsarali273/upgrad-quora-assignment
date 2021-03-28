@@ -31,6 +31,54 @@ public class AnswerEntity implements Serializable {
   @Size(max = 200)
   private String uuid;
 
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public String getAnswer() {
+    return answer;
+  }
+
+  public void setAnswer(String answer) {
+    this.answer = answer;
+  }
+
+  public Timestamp getDate() {
+    return date;
+  }
+
+  public void setDate(Timestamp date) {
+    this.date = date;
+  }
+
+  public UserEntity getUser() {
+    return user;
+  }
+
+  public void setUser(UserEntity user) {
+    this.user = user;
+  }
+
+  public QuestionEntity getQuestion() {
+    return question;
+  }
+
+  public void setQuestion(QuestionEntity question) {
+    this.question = question;
+  }
+
   @Column(name = "ANS")
   @NotNull
   @Size(max = 255)
