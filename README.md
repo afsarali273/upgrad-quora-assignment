@@ -23,6 +23,7 @@ This is a sample demo Quora like application using Spring boot ,Postgresql , JWT
    
    ![Unit Tests](https://github.com/afsarali273/upgrad-quora-assignment/blob/dev/afsar/img.png)
 
+***Also you can check GithubActions build.***
 
 ## Contributors 
   - **Mohammed Afsar Ali** @afsarali273
