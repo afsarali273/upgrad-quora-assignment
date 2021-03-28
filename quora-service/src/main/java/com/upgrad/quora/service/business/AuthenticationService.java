@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.Base64;
 
 @Service
 public class AuthenticationService {
@@ -68,7 +67,7 @@ public class AuthenticationService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity userProfile(long UserId, final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
+    public UserAuthTokenEntity userProfile(String uuId, final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
         UserAuthTokenEntity userEntity = userDao.getUserAuthTokenEntity(accessToken);
 
         //Check user is signed in
@@ -80,22 +79,22 @@ public class AuthenticationService {
             throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get user details");
 
         //Check userId is correct/exist in DB
-        if (userDao.getUserByUserId(UserId) == null)
+        if (userDao.getUserByUuid(uuId) == null)
             throw new UserNotFoundException("USR-001", "User with entered uuid does not exist");
 
         return userEntity;
     }
 
-    public UserAuthTokenEntity getUserAuthTokenEntity(String authorization) {
-        try {
-            byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
-            String decodedText = new String(decode);
-            String[] decodedArray = decodedText.split(":");
-            return userDao.getUserAuthTokenEntityByUserName(decodedArray[0]);
-        } catch (Exception exc) {
-            return null;
-        }
-    }
+//    public UserAuthTokenEntity getUserAuthTokenEntity(String authorization) {
+//        try {
+//            byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
+//            String decodedText = new String(decode);
+//            String[] decodedArray = decodedText.split(":");
+//            return userDao.getUserAuthTokenEntityByUserName(decodedArray[0]);
+//        } catch (Exception exc) {
+//            return null;
+//        }
+//    }
 }
 
 
