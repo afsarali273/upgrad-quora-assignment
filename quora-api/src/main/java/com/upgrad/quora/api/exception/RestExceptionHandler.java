@@ -69,6 +69,6 @@ public class RestExceptionHandler {
       AnswerNotFoundException exc, WebRequest request) {
     return new ResponseEntity<ErrorResponse>(
         new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()),
-        HttpStatus.BAD_REQUEST);
+        HttpStatus.NOT_FOUND);
   }
 }
