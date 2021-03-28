@@ -18,6 +18,9 @@ This is a sample demo Quora like application using Spring boot ,Postgresql , JWT
    - First build the application using `mvn clean install -DskipTests`
    - Then run the application
    - you can check swagger at `http://localhost:8080/api/swagger-ui.html`
+   
+   **Test Result**
+   ![Unit Tests](https://github.com/afsarali273/upgrad-quora-assignment/blob/dev/afsar/img.png)
 
 
 ## Contributors 
